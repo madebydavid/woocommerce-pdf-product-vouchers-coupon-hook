@@ -27,7 +27,7 @@ class PluginAdmin {
     
     function registerAdminMenu() {
         $optionsPage = add_submenu_page(
-            'booking_settings',
+            'woocommerce',
             __( 'Basket Avenger', Plugin::TRANSLATE_DOMAIN),
             __( 'Basket Avenger', Plugin::TRANSLATE_DOMAIN),
             'manage_woocommerce',
