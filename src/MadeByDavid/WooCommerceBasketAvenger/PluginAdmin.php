@@ -17,7 +17,7 @@ class PluginAdmin {
         
         $this->plugin = $plugin;
         
-        /* priority must be low so that the booking plugin adds the menu first */
+        /* priority must be low so that the woocommerce plugin adds the menu first */
         add_action('admin_menu', array($this, 'registerAdminMenu'), 100);
         add_action('admin_head', array($this, 'registerAdminCss'));
         add_action('admin_init', array($this, 'registerAdminJavascript'));
@@ -69,7 +69,7 @@ class PluginAdmin {
     
         if (!wp_verify_nonce(sanitize_text_field($_POST['nonce']), self::ADMIN_SCRIPT_ID)) {
             echo json_encode(array('error' => __('Invalid nonce', Plugin::TRANSLATE_DOMAIN)));
-            exit();
+            die();
         }
         
         /* extract the real options from the POST into an array */
