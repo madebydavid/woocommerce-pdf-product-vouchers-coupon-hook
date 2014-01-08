@@ -36,6 +36,11 @@ class PluginAdmin {
         );
         add_action('admin_print_scripts-' . $optionsPage, array($this, 'enqueueAdminJavascript'));
     }
+    
+    function getProductCategories() {
+        return get_terms('product_cat', array('taxonomy' => 'product_cat'));
+    }
+    
     function registerAdminCss() {
         echo '<link rel="stylesheet" type="text/css" href="'.WOOCOMMERCE_BASKETAVENGER_URL.'css/admin.css"></link>';
     }
@@ -70,12 +75,12 @@ class PluginAdmin {
         /* extract the real options from the POST into an array */
         parse_str($_POST['options'], $options);
         
-        if (array_key_exists('reschedulePeriodDays', $options)) {
-        //    $this->plugin->getConfiguration()->setReschedulePeriodDays($options['reschedulePeriodDays']);
+        if (array_key_exists('selfishCategory', $options)) {
+            $this->plugin->getConfiguration()->setSelfishCategoryID($options['selfishCategory']);
         }
         
         die();
-            
+        
     }
     
     function enqueueAdminJavascript() {

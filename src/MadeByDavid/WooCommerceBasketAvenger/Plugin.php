@@ -20,7 +20,6 @@ class Plugin {
             $this->admin = new PluginAdmin($this);
         }
         
-        
     }
     
     public function init(){
