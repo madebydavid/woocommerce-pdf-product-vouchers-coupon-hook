@@ -17,6 +17,14 @@
                     </select>
                 </td>
             </tr>
+            <tr valign="top">
+                <th scope="row">Skip checkout for Selfish Category</th>
+                <td>
+                    <input type="checkbox" name="skipCheckout" 
+                        <?php echo ($this->plugin->getConfiguration()->getSkipCheckout()) ? "checked='checked'" : "" ?>
+                    />
+                </td>
+            </tr>
         </table>
         <p class="submit">
             <input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes">

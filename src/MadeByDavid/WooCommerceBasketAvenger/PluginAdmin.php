@@ -79,6 +79,12 @@ class PluginAdmin {
             $this->plugin->getConfiguration()->setSelfishCategoryID($options['selfishCategory']);
         }
         
+        
+        $this->plugin->getConfiguration()->setSkipCheckout(
+            array_key_exists('skipCheckout', $options)
+        );
+         
+        
         die();
         
     }

@@ -6,6 +6,7 @@ class PluginConfiguration {
     
     const OPTION_NAME_PREFIX = 'MBD\\WCBA';
     const OPTION_NAME_SELFISH_CATEGORY_ID = 'selfish_cat_id';
+    const OPTION_NAME_SKIP_CHECKOUT = 'skip_checkout';
     
     public function buildOptionName($optionName) {
         return implode('::', array(
@@ -25,6 +26,20 @@ class PluginConfiguration {
         return update_option(
             self::buildOptionName(self::OPTION_NAME_SELFISH_CATEGORY_ID),
             $categoryID
+        );
+    }
+    
+    public function getSkipCheckout() {
+        return (bool)get_option(
+            self::buildOptionName(self::OPTION_NAME_SKIP_CHECKOUT),
+            false
+        );
+    }
+    
+    public function setSkipCheckout($skip) {
+        return update_option(
+            self::buildOptionName(self::OPTION_NAME_SKIP_CHECKOUT),
+            (bool)$skip
         );
     }
     
