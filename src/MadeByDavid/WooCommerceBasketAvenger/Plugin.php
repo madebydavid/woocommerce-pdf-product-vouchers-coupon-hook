@@ -51,7 +51,6 @@ class Plugin {
                 /* if it is a selfish product then we only have to loop once as
                  * they are selfish and only exist by themselves
                  */
-                global $woocommerce;
                 
                 if (1 != count($woocommerce->payment_gateways->get_available_payment_gateways())) {
                     return $url;
@@ -81,9 +80,20 @@ class Plugin {
                 update_option('woocommerce_calc_shipping', 'no');
                 /* process the checkout - make the order etc */
                 $woocommerce->checkout()->process_checkout();
-                
                 /* revert the old setting */
                 update_option('woocommerce_calc_shipping', $oldOption);
+                
+                /* there's an error - probably the selfish category is full (we use this plugin with the booking system mainly) */
+                if (0 !== count($woocommerce->get_errors())) {
+                    /* for some reason we get dups in the errors */
+                    $woocommerce->errors = array_unique($woocommerce->errors);
+                    
+                    /* send the user back to the product page and display the error there */
+                    /* returning the url doesnt work we need to redirect */
+                    wp_safe_redirect(get_permalink($item['product_id']));
+                    
+                    return get_permalink($item['product_id']);
+                }
                 
                 $payment_page = get_permalink(woocommerce_get_page_id('pay'));
                 
