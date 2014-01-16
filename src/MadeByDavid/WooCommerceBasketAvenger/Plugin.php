@@ -63,6 +63,7 @@ class Plugin {
                     case (0 == strlen($currentUser->user_firstname)):
                     case (0 == strlen($currentUser->user_lastname)):
                     case (0 == strlen($currentUser->user_email)):
+                        wp_logout();
                         return $url;
                 }
                 
