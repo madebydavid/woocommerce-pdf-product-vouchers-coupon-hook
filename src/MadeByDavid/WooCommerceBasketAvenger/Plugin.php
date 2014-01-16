@@ -80,6 +80,7 @@ class Plugin {
                 update_option('woocommerce_calc_shipping', 'no');
                 /* process the checkout - make the order etc */
                 $woocommerce->checkout()->process_checkout();
+                
                 /* revert the old setting */
                 update_option('woocommerce_calc_shipping', $oldOption);
                 
