@@ -74,10 +74,11 @@ class Plugin {
                 $_POST['payment_method'] = key($woocommerce->payment_gateways->get_available_payment_gateways());
                 /* nonce */
                 $_REQUEST['_n'] = wp_create_nonce('woocommerce-process_checkout');
+                
                 /* hack - force no shipping in this situation */
                 $oldOption = get_option('woocommerce_calc_shipping');
                 update_option('woocommerce_calc_shipping', 'no');
-                
+                /* process the checkout - make the order etc */
                 $woocommerce->checkout()->process_checkout();
                 /* revert the old setting */
                 update_option('woocommerce_calc_shipping', $oldOption);
@@ -93,9 +94,8 @@ class Plugin {
                 
             }
         }
-        return $url;
-        error_log("skipCheckout:$url");
         
+        return $url;
     }
     
     function avenge($valid, $product_id, $quantity) {
