@@ -19,11 +19,6 @@ class Plugin {
         add_filter('woocommerce_add_to_cart_validation', array($this, 'avenge'), 10, 3);
         add_filter('woocommerce_get_checkout_url', array($this, 'skipCheckout'), 10, 1);
         
-        add_filter('woocommerce_add_cart_item_data', array($this, 'addItemMeta'), 10, 2);
-        add_filter('woocommerce_get_cart_item_from_session', array($this, 'getCartItemFromSession'), 10, 2);
-        add_filter('woocommerce_get_item_data',array($this, 'getOrderItemMeta'), 10, 2);
-        add_action('woocommerce_add_order_item_meta', array($this, 'addOrderItemMeta'), 10, 2);
-        
         if (is_admin()) {
             $this->admin = new PluginAdmin($this);
         }
@@ -33,47 +28,15 @@ class Plugin {
     public function init(){
         
     }
-    
-    function addOrderItemMeta($itemId, $cartItem) {
-        if (isset($cartItem['TESTING'])) {
-            woocommerce_add_order_item_meta( $itemId, 'SOMETHING', $cartItem['TESTING'] );
-        }
-    }
-    
-    function getOrderItemMeta($otherData, $cartItem) {
-        
-        if (isset($cartItem['TESTING'])) {
-            error_log("setting");
-            $otherData[] = array(
-            	'name' => 'SOMETHING',
-                'value'=> $cartItem['TESTING'],
-                 'display' => 'yes'
-            );
-        }
-        
-        return $otherData;
-    }
-    
-    function getCartItemFromSession($cartItem, $values) {
-        
-        if (isset($values['TESTING'])) {
-            $cartItem['TESTING'] = $values['TESTING'];
-        }
-        
-        
-        return $cartItem;
-    }
-    
-    function addItemMeta($itemMeta, $productId) {
-
-        
-        $itemMeta['TESTING'] = $_POST['meta-test'];
-        return $itemMeta;
-    }
+   
     
     function skipCheckout($url) {
         
         global $woocommerce;
+        
+        if (!is_user_logged_in()) {
+            return $url;
+        }
         
         if (!$this->getConfiguration()->getSkipCheckout()) {
             return $url;
@@ -88,16 +51,44 @@ class Plugin {
                 /* if it is a selfish product then we only have to loop once as
                  * they are selfish and only exist by themselves
                  */
-                error_log("skipCheckout:$url");
                 global $woocommerce;
-                $woocommerce_checkout = $woocommerce->checkout();
-                $woocommerce_checkout->process_checkout();
-                /* only works if we have 1 payment gateway enabled */
+                
                 if (1 != count($woocommerce->payment_gateways->get_available_payment_gateways())) {
                     return $url;
                 }
                 
-           
+                $currentUser = wp_get_current_user();
+                /* check we have first, last and email */
+                switch (true) {
+                    case (0 == strlen($currentUser->user_firstname)):
+                    case (0 == strlen($currentUser->user_lastname)):
+                    case (0 == strlen($currentUser->user_email)):
+                        return $url;
+                }
+                
+                $_POST['billing_first_name'] = $currentUser->user_firstname;
+                $_POST['billing_last_name'] = $currentUser->user_lastname;
+                $_POST['billing_email'] = $currentUser->user_email;
+                
+                /* use the only selected payment method */
+                $_POST['payment_method'] = key($woocommerce->payment_gateways->get_available_payment_gateways());
+                /* nonce */
+                $_REQUEST['_n'] = wp_create_nonce('woocommerce-process_checkout');
+                /* hack - force no shipping in this situation */
+                $oldOption = get_option('woocommerce_calc_shipping');
+                update_option('woocommerce_calc_shipping', 'no');
+                
+                $woocommerce->checkout()->process_checkout();
+                /* revert the old setting */
+                update_option('woocommerce_calc_shipping', $oldOption);
+                
+                $payment_page = get_permalink(woocommerce_get_page_id('pay'));
+                
+                if (get_option('woocommerce_force_ssl_checkout' ) == 'yes') {
+                    $payment_page = str_replace( 'http:', 'https:', $payment_page );
+                }
+                
+                return $payment_page;
                 
                 
             }
