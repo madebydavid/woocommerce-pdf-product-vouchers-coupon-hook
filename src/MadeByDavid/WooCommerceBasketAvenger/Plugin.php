@@ -33,6 +33,30 @@ class Plugin {
     function skipCheckout($url) {
         
         global $woocommerce;
+        global $woocommerce_booking;
+        
+        /* HACK TO SHOW BOOKING ERRORS ON THE PRODUCT PAGE */
+        $hasSelfish = false; $selfishProductId = 0; $selfishProductCartKey = false;
+        foreach ($woocommerce->cart->get_cart() as $key => $item) {
+            if ($this->isASelfishproduct($item['product_id'])) {
+                $hasSelfish = true;
+                $selfishProductId = $item['product_id'];
+                $selfishProductCartKey = $key;
+            }
+        }
+        
+        if ($hasSelfish) {
+            if (0 == count($woocommerce->get_errors())) {
+                $woocommerce_booking->quantity_check();
+                if (0 !== count($woocommerce->get_errors())) {
+                    /* remove it from the cart */
+                    $woocommerce->cart->set_quantity($selfishProductCartKey, 0);
+                    wp_safe_redirect(get_permalink($selfishProductId));
+                    return get_permalink($selfishProductId);
+                }
+            }
+        }
+        
         
         if (!is_user_logged_in()) {
             return $url;
@@ -82,18 +106,6 @@ class Plugin {
                 $woocommerce->checkout()->process_checkout();
                 /* revert the old setting */
                 update_option('woocommerce_calc_shipping', $oldOption);
-                
-                /* there's an error - probably the selfish category is full (we use this plugin with the booking system mainly) */
-                if (0 !== count($woocommerce->get_errors())) {
-                    /* for some reason we get dups in the errors */
-                    $woocommerce->errors = array_unique($woocommerce->errors);
-                    
-                    /* send the user back to the product page and display the error there */
-                    /* returning the url doesnt work we need to redirect */
-                    wp_safe_redirect(get_permalink($item['product_id']));
-                    
-                    return get_permalink($item['product_id']);
-                }
                 
                 $payment_page = get_permalink(woocommerce_get_page_id('pay'));
                 
