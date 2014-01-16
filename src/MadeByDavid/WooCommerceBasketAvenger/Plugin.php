@@ -33,30 +33,6 @@ class Plugin {
     function skipCheckout($url) {
         
         global $woocommerce;
-        global $woocommerce_booking;
-        
-        /* HACK TO SHOW BOOKING ERRORS ON THE PRODUCT PAGE */
-        $hasSelfish = false; $selfishProductId = 0; $selfishProductCartKey = false;
-        foreach ($woocommerce->cart->get_cart() as $key => $item) {
-            if ($this->isASelfishproduct($item['product_id'])) {
-                $hasSelfish = true;
-                $selfishProductId = $item['product_id'];
-                $selfishProductCartKey = $key;
-            }
-        }
-        
-        if ($hasSelfish) {
-            if (0 == count($woocommerce->get_errors())) {
-                $woocommerce_booking->quantity_check();
-                if (0 !== count($woocommerce->get_errors())) {
-                    /* remove it from the cart */
-                    $woocommerce->cart->set_quantity($selfishProductCartKey, 0);
-                    wp_safe_redirect(get_permalink($selfishProductId));
-                    return get_permalink($selfishProductId);
-                }
-            }
-        }
-        
         
         if (!is_user_logged_in()) {
             return $url;
@@ -75,7 +51,6 @@ class Plugin {
                 /* if it is a selfish product then we only have to loop once as
                  * they are selfish and only exist by themselves
                  */
-                
                 if (1 != count($woocommerce->payment_gateways->get_available_payment_gateways())) {
                     return $url;
                 }
@@ -114,7 +89,6 @@ class Plugin {
                 }
                 
                 return $payment_page;
-                
                 
             }
         }
