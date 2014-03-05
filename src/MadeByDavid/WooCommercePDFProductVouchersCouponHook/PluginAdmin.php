@@ -72,15 +72,13 @@ class PluginAdmin {
         /* extract the real options from the POST into an array */
         parse_str($_POST['options'], $options);
         
-        if (array_key_exists('selfishCategory', $options)) {
-            $this->plugin->getConfiguration()->setSelfishCategoryID($options['selfishCategory']);
+        if (array_key_exists('product', $options)) {
+            $this->plugin->getConfiguration()->setProductID($options['product']);
         }
         
-        
-        $this->plugin->getConfiguration()->setSkipCheckout(
-            array_key_exists('skipCheckout', $options)
-        );
-         
+        if (array_key_exists('voucherCodePrefix', $options)) {
+            $this->plugin->getConfiguration()->setVoucherPrefix($options['voucherCodePrefix']);
+        }
         
         die();
         
