@@ -1,16 +1,16 @@
 <?php
 /**
- * Plugin Name: WooCommerce Basket Avenger
- * Plugin URI: https://github.com/madebydavid/woocommerce-basket-avenger
- * Description: Basket Avenger Plugin for Woocommerce - Used on Suzu Website
+ * Plugin Name: WooCommerce PDF Product Vouchers Coupon Hook
+ * Plugin URI: https://github.com/madebydavid/woocommerce-pdf-product-vouchers-coupon-hook
+ * Description: Creates shop coupons from PDF product vouchers
  * Version: 0.1
  * Author: madebydavid
  * Author URI: https://github.com/madebydavid/
- * License: 
+ * License: MIT
  */
 
 
-function MadeByDavid_WooCommerceBasketAvenger_Autoloader($classname) {
+function MadeByDavid_WooCommercePDFProductVouchersCouponHook_Autoloader($classname) {
 	
 	if (false === stripos($classname, "MadeByDavid")) return;
 	
@@ -25,10 +25,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     /* this is a hack - TODO: think about how to handle composer'd deps of a WP plugin */
     require_once WP_CONTENT_DIR . '/../vendor/autoload.php';
     
-	define('WOOCOMMERCE_BASKETAVENGER_DIR', dirname(__FILE__));
-	define('WOOCOMMERCE_BASKETAVENGER_URL', plugin_dir_url(__FILE__));
+	define('WOOCOMMERCE_PDFPRODUCTVOUCHERSCOUPONHOOK_DIR', dirname(__FILE__));
+	define('WOOCOMMERCE_PDFPRODUCTVOUCHERSCOUPONHOOK_URL', plugin_dir_url(__FILE__));
 	
-	spl_autoload_register('MadeByDavid_WooCommerceBasketAvenger_Autoloader');
+	spl_autoload_register('MadeByDavid_WooCommercePDFProductVouchersCouponHook_Autoloader');
 
-	$GLOBALS['\MadeByDavid\WooCommerceBasketAvenger\Plugin'] = new \MadeByDavid\WooCommerceBasketAvenger\Plugin();
+	$GLOBALS['\MadeByDavid\WooCommercePDFProductVouchersCouponHook\Plugin'] = new \MadeByDavid\WooCommercePDFProductVouchersCouponHook\Plugin();
 }

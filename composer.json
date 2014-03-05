@@ -1,15 +1,14 @@
 {
-	"name": "madebydavid/woocommerce-basket-avenger",
-	"description": "Basket Avenger Plugin for WooCommerce",
-	"type": "wordpress-plugin",
-	"require": {
-		"composer/installers": "~1.0",
-        "phpunit/phpunit": "3.7.*"
-	},
-    "autoload":	{
-		"psr-0": {
-			"MadeByDavid"		: "src/"
-		}
-	}
+    "name": "madebydavid/woocommerce-pdf-product-vouchers-coupon-hook",
+    "description": "Creates shop coupons from PDF product vouchers",
+    "type": "wordpress-plugin",
+    "require": {
+        "composer/installers": "~1.0"
+    },
+    "autoload":    {
+        "psr-0": {
+            "MadeByDavid"        : "src/"
+        }
+    }
 
 }

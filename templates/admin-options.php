@@ -1,28 +1,29 @@
 <div class="wrap">
     <?php screen_icon('basket-avenger'); ?>
-    <h2>Basket Avenger Settings</h2>
-    <p>The when products in the selfish category are added to the basket, all other items are removed.</p>
-    <p>When products not in the selfish category are added to the basket, all products in the selfish category are removed.</p>
-    <form id="mbd_wcba_admin_form" method="post" action="options.php">
+    <h2>PDF Vouchers To Coupon</h2>
+    <p>This plugin generates coupons when a voucher product is purchased.</p>
+    <p>The configuration is Global for the site - so you should only be selling one type of PDF voucher linked to one type of product.</p>
+    <p>Future versions will not have this restriction</p>
+    <form id="mbd_wcppvch_admin_form" method="post" action="options.php">
         <table class="form-table">
             <tr valign="top">
-                <th scope="row">Selfish Category</th>
+                <th scope="row">Product</th>
                 <td>
-                    <select id="selfishCategory" name="selfishCategory">
+                    <select id="product" name="product">
                         <option value="">Please select</option>
-                        <?php foreach ($categories = $this->getProductCategories() as $category): ?>
-                            <option value="<?php echo $category->term_id?>" 
-                                <?php echo ($category->term_id == $this->plugin->getConfiguration()->getSelfishCategoryID()) ? "selected='selected'" : "" ?>><?php echo $category->name?></option>
+                        <?php $productPosts = new WP_Query(['post_type' => 'product', 'nopaging' => true]); ?>
+                        <?php $selectedProductID = $this->plugin->getConfiguration()->getProductID(); ?>
+                        <?php foreach ($productPosts->posts as $product): ?>
+                            <option value="<?php echo $product->ID?>" 
+                                <?php echo ($product->ID == $selectedProductID) ? "selected='selected'" : "" ?>><?php echo $product->post_title;?></option>
                         <?php endforeach; ?>
                     </select>
                 </td>
             </tr>
             <tr valign="top">
-                <th scope="row">Skip checkout for Selfish Category</th>
+                <th scope="row">Voucher Code Prefix</th>
                 <td>
-                    <input type="checkbox" name="skipCheckout" 
-                        <?php echo ($this->plugin->getConfiguration()->getSkipCheckout()) ? "checked='checked'" : "" ?>
-                    />
+                    <input type="text" name="voucherCodePrefix" value="<?php echo ($this->plugin->getConfiguration()->getVoucherPrefix())?>" />
                 </td>
             </tr>
         </table>

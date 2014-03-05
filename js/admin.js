@@ -1,19 +1,20 @@
 
 
 jQuery(document).ready(function($) { 
-    
-    $('#mbd_wcba_admin_form').submit(function(e) {
+	
+    $('#mbd_wcppvch_admin_form').submit(function(e) {
 
         e.preventDefault();
         $.post(
-            WooCommerceBasketAvenger.webServiceUrl,
+            WooCommercePDFProductVouchersCouponHook.webServiceUrl,
             {
-                'action': WooCommerceBasketAvenger.webServiceAction,
-                'nonce': WooCommerceBasketAvenger.webServiceNonce,
+                'action': WooCommercePDFProductVouchersCouponHook.webServiceAction,
+                'nonce': WooCommercePDFProductVouchersCouponHook.webServiceNonce,
                 'options': $( this ).serialize() 
             },
             function(response) {
-                WooCommerceBasketAvenger_displayPointerMessage('Changes Saved', $);
+                WooCommercePDFProductVouchersCouponHook_displayPointerMessage('Changes Saved', $);
+                
                 console.log(response);
                      
                 if (response.error) {
@@ -30,10 +31,10 @@ jQuery(document).ready(function($) {
 });
 
 
-function WooCommerceBasketAvenger_displayPointerMessage(message, $) {
+function WooCommercePDFProductVouchersCouponHook_displayPointerMessage(message, $) {
 
     $('#wpadminbar').pointer({
-        content: '<h3>WooCommerce Basket Avenger</h3><p>' + message + '</p>',
+        content: '<h3>WooCommerce PDF Product Vouchers Coupon Hook</h3><p>' + message + '</p>',
         position: {
             my: 'left top',
             at: 'center bottom',

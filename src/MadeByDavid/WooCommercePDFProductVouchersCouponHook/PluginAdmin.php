@@ -1,11 +1,11 @@
 <?php
 
-namespace MadeByDavid\WooCommerceBasketAvenger;
+namespace MadeByDavid\WooCommercePDFProductVouchersCouponHook;
 
 class PluginAdmin {
     
-    const ADMIN_SCRIPT_ID = 'madebydavid-woocommercebasketavenger-admin-javascript';
-    const ADMIN_AJAX_ACTION = 'madebydavid-woocommercebasketavenger-admin-ajax-action';
+    const ADMIN_SCRIPT_ID = 'madebydavid-woocommercepdfproductvoucherscouponhook-admin-javascript';
+    const ADMIN_AJAX_ACTION = 'madebydavid-woocommercepdfproductvoucherscouponhook-admin-ajax-action';
     
     private $plugin;
     
@@ -28,8 +28,8 @@ class PluginAdmin {
     function registerAdminMenu() {
         $optionsPage = add_submenu_page(
             'woocommerce',
-            __( 'Basket Avenger', Plugin::TRANSLATE_DOMAIN),
-            __( 'Basket Avenger', Plugin::TRANSLATE_DOMAIN),
+            __( 'PDF Vouchers To Coupon', Plugin::TRANSLATE_DOMAIN),
+            __( 'PDF Vouchers To Coupon', Plugin::TRANSLATE_DOMAIN),
             'manage_woocommerce',
             Plugin::TRANSLATE_DOMAIN,
             array($this, 'showAdminOptions')
@@ -37,18 +37,15 @@ class PluginAdmin {
         add_action('admin_print_scripts-' . $optionsPage, array($this, 'enqueueAdminJavascript'));
     }
     
-    function getProductCategories() {
-        return get_terms('product_cat', array('taxonomy' => 'product_cat'));
-    }
     
     function registerAdminCss() {
-        echo '<link rel="stylesheet" type="text/css" href="'.WOOCOMMERCE_BASKETAVENGER_URL.'css/admin.css"></link>';
+        echo '<link rel="stylesheet" type="text/css" href="'.WOOCOMMERCE_PDFPRODUCTVOUCHERSCOUPONHOOK_URL.'css/admin.css"></link>';
     }
     
     function registerAdminJavascript() {
         wp_register_script(
             self::ADMIN_SCRIPT_ID,
-            WOOCOMMERCE_BASKETAVENGER_URL . 'js/admin.js',
+            WOOCOMMERCE_PDFPRODUCTVOUCHERSCOUPONHOOK_URL . 'js/admin.js',
             array('jquery')
         );
     }
@@ -94,7 +91,7 @@ class PluginAdmin {
         /* setup script variables for webservice */
         wp_localize_script(
             self::ADMIN_SCRIPT_ID,
-            'WooCommerceBasketAvenger',
+            'WooCommercePDFProductVouchersCouponHook',
             array(
                 'webServiceUrl' => admin_url('admin-ajax.php'),
                 'webServiceAction' => self::ADMIN_AJAX_ACTION,
@@ -109,7 +106,7 @@ class PluginAdmin {
             wp_die( __('You do not have sufficient permissions to access this page.'));
         }
      
-        include WOOCOMMERCE_BASKETAVENGER_DIR . '/templates/admin-options.php';
+        include WOOCOMMERCE_PDFPRODUCTVOUCHERSCOUPONHOOK_DIR . '/templates/admin-options.php';
     }
     
 }
