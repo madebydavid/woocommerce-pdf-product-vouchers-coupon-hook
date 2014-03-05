@@ -19,7 +19,6 @@ class Plugin {
         $this->configuration = new PluginConfiguration();
         
         add_filter('woocommerce_voucher_number', array($this, 'getVoucherNumber'), 0, 2);
-
         
         if (is_admin()) {
             $this->admin = new PluginAdmin($this);
@@ -41,6 +40,7 @@ class Plugin {
         
         self::log("getVoucherNumber:".$voucherNumber);
         self::log("expiry:".$wcVoucher->get_expiry());
+        
         $orderId = $wcVoucher->get_order()->id;
         
         /* if no prefix set - do nothing */
@@ -53,10 +53,10 @@ class Plugin {
             return $voucherNumber;
         }
         
-        if (false == ($coupon = $this->getCouponFromVoucherOrderId($orderId))) {
+        if (false == ($coupon = $this->getCouponFromVoucherOrderId($voucherNumber))) {
             self::log("coupon not found - need to create");
             $coupon = $this->generateCouponForVoucherOrder(
-                $orderId,
+                $voucherNumber,
                 $prefix,
                 $productId,
                 $wcVoucher->get_expiry()
@@ -102,7 +102,6 @@ class Plugin {
         update_post_meta($newCouponId, 'apply_before_tax', 'yes');
         update_post_meta($newCouponId, 'free_shipping', 'no');
         
-        
         $today = new \DateTime();
         $today->add(\DateInterval::createFromDateString($expiryDays.' days'));
         update_post_meta($newCouponId, 'expiry_date', $today->format('Y-m-d'));
@@ -110,8 +109,7 @@ class Plugin {
         update_post_meta($newCouponId, self::COUPON_ORDER_ID_META_KEY, $orderId);
         
         return $this->getCouponFromVoucherOrderId($orderId);
-    } 
-    
+    }
     
     private function getCouponFromVoucherOrderId($orderId) {
         
@@ -124,13 +122,10 @@ class Plugin {
         }
         
         return false;
-        
     }
     
-   
     public function getConfiguration() {
         return $this->configuration;
     }
     
-
 }
