@@ -102,7 +102,6 @@ class Plugin {
             $order = new \WC_Order($fixedOrderId);
             $orderItems = $order->get_items();
             
-            $error = '';
             $voucherOrderItemQuantity = null;
             
             foreach ($orderItems as $item) {
@@ -120,7 +119,7 @@ class Plugin {
         if (null === $voucherOrderItemQuantity) {
             /* this should not happen - enhanced logging and 
              * error reporting whilst still beta testing this */
-            $error .=
+            $error =
             "----ERROR GETTING ORDER ITEM QUANTITY ----\n\n".
             "orderId: $orderId\n".
             "fixedOrderId: $fixedOrderId\n".
