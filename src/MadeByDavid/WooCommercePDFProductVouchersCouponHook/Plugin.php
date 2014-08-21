@@ -105,16 +105,21 @@ class Plugin {
             $voucherOrderItemQuantity = null;
             
             foreach ($orderItems as $item) {
+                
+                if (!array_key_exists('voucher_number', $item)) {
+                    continue;
+                }
+                
                 if ($item['voucher_number'] == $voucherNumber) {
                     $voucherOrderItemQuantity = $item['qty'];
                 }
+                
             }
             
         } else {
-            /* from looking at the db, this has happened - will log and use default
-             * will investigate further */
+            /* From looking at the db, this has happened - will log and use default
+             * Will investigate further */
         }
-        
         
         if (null === $voucherOrderItemQuantity) {
             /* this should not happen - enhanced logging and 
@@ -138,7 +143,6 @@ class Plugin {
             
         }
         
-        /* quantity should be dynamic in the future */
         $couponAmount  = get_post_meta($productId, '_regular_price', true) * $voucherOrderItemQuantity;
         
         update_post_meta($newCouponId, 'coupon_amount', $couponAmount);
