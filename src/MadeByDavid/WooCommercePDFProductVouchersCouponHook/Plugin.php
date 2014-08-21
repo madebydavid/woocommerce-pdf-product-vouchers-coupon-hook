@@ -90,8 +90,57 @@ class Plugin {
         
         update_post_meta($newCouponId, 'discount_type', 'fixed_cart');
         
+        $orderIdParts = explode('-', $orderId);
+        
+        if (2 == count($orderIdParts)) {
+            
+            $fixedOrderId = $orderIdParts[0];
+            $voucherNumber = $orderIdParts[1];
+            
+            /* determine the quantity for this voucher and make sure the coupon has
+             * the correct coupon_amount set based on that */
+            $order = new \WC_Order($fixedOrderId);
+            $orderItems = $order->get_items();
+            
+            $error = '';
+            $voucherOrderItemQuantity = null;
+            
+            foreach ($orderItems as $item) {
+                if ($item['voucher_number'] == $voucherNumber) {
+                    $voucherOrderItemQuantity = $item['qty'];
+                }
+            }
+            
+        } else {
+            /* from looking at the db, this has happened - will log and use default
+             * will investigate further */
+        }
+        
+        
+        if (null === $voucherOrderItemQuantity) {
+            /* this should not happen - enhanced logging and 
+             * error reporting whilst still beta testing this */
+            $error .=
+            "----ERROR GETTING ORDER ITEM QUANTITY ----\n\n".
+            "orderId: $orderId\n".
+            "fixedOrderId: $fixedOrderId\n".
+            "productId: $productId\n";
+            
+            error_log($error);
+            
+            @wp_mail(
+                get_option('admin_email'),
+                'WooCommerce PDF Product Vouchers Coupon Hook Error',
+                $error
+            );
+            
+            /* default to 1 so that we don't kill the order process */
+            $voucherOrderItemQuantity = 1;
+            
+        }
+        
         /* quantity should be dynamic in the future */
-        $couponAmount  = get_post_meta($productId, '_regular_price', true) * 1;
+        $couponAmount  = get_post_meta($productId, '_regular_price', true) * $voucherOrderItemQuantity;
         
         update_post_meta($newCouponId, 'coupon_amount', $couponAmount);
         update_post_meta($newCouponId, 'individual_use', 'yes');
